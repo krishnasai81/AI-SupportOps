@@ -4,29 +4,30 @@ from pathlib import Path
 
 
 @lru_cache(maxsize=1)
-def _load_mirage():
+def _mirage():
     try:
         import cactus
     except ImportError as exc:
-        raise RuntimeError(
-            "Mirage is not installed. Install requirements including cactus-compute."
-        ) from exc
+        raise RuntimeError("Mirage is unavailable. Install cactus-compute in the backend environment.") from exc
     return cactus.Mirage()
 
 
 def analyze_image(image_path: str) -> dict:
-    """
-    Analyze an image with Cactus Mirage. Returns the raw model output and a
-    conservative evidence warning; it does not claim definitive root cause.
-    """
     path = Path(image_path)
-    if not path.exists() or not path.is_file():
-        raise ValueError("Image file was not found.")
-    result = _load_mirage().describe(str(path))
+    if not path.is_file():
+        raise ValueError("Image file does not exist.")
+    result = _mirage().describe(str(path))
+    if isinstance(result, (dict, list)):
+        import json
+        description = json.dumps(result, ensure_ascii=False)
+    else:
+        description = str(result)
+    if not description.strip():
+        raise RuntimeError("Mirage returned an empty description.")
     return {
-        "provider": "cactus-mirage",
-        "analysis": result,
-        "limitations": "Visual symptoms only. Root cause must be verified by troubleshooting or a human.",
+        "provider": "Cactus Mirage",
+        "visual_description": description,
+        "limitations": "This describes visible evidence only; it does not prove the underlying root cause.",
     }
 
 
