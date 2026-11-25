@@ -18,4 +18,4 @@ langgraph
 python-jose[cryptography]
 pwdlib[argon2]
 Pillow
-cactus-compute>=3.3.0
+cactus-compute>=4.2.7,<5.0
