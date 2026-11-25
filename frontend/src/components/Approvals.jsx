@@ -31,8 +31,8 @@ export default function Approvals({ user }) {
         decision,
         review_note: notes[approvalId] || null,
       });
-      setNotice({ type: "success", message: `Approval #${approvalId} was ${decision}d by ${user.email}.` });
       await loadApprovals();
+      setNotice({ type: "success", message: `Approval #${approvalId} was ${decision}d by ${user.email}.` });
     } catch (error) {
       setNotice({ type: "error", message: error.message });
     } finally {
