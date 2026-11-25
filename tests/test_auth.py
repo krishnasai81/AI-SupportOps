@@ -37,7 +37,7 @@ def test_customer_cannot_access_approvals(client):
 
 
 def test_ticket_endpoints_require_authentication(client):
-    response = client.get("/api/v1/tickets/", headers={"Authorization": ""})
+    response = client.get("/api/v1/tickets/", headers={"Authorization": "Bearer invalid-token"})
     assert response.status_code == 401
 
 
