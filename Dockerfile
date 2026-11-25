@@ -7,8 +7,7 @@ COPY frontend/package.json frontend/package-lock.json ./
 RUN npm ci
 
 COPY frontend/ ./
-ARG VITE_API_BASE_URL=""
-ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}
+# VITE_API_BASE_URL is intentionally not set: production uses same-origin API paths.
 RUN npm run build
 
 
@@ -21,7 +20,8 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONPATH=/app \
     PORT=7860 \
     HOME=/home/user \
-    PATH=/home/user/.local/bin:$PATH
+    PATH=/home/user/.local/bin:$PATH \
+    CACTUS_TELEMETRY=0
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
