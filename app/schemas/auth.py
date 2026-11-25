@@ -1,11 +1,10 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, ConfigDict, EmailStr
 
 
 class UserPublic(BaseModel):
     id: int
     email: EmailStr
     role: str
-    customer_id: int | None
+    customer_id: int | None = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
