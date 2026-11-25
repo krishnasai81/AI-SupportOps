@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   Activity, Bot, CheckCircle2, Clock3, LayoutDashboard, MessageSquare,
-  BookOpen, ShieldCheck, Settings, Headset, Bell, LogOut, UserRound
+  BookOpen, ShieldCheck, Headset, LogOut, UserRound
 } from "lucide-react";
 
 import Tickets from "./components/Tickets";
