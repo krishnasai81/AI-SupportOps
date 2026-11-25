@@ -28,8 +28,8 @@ async def analyze_ticket_image(
         raise HTTPException(status_code=404, detail="Ticket not found.")
     require_ticket_access(ticket, user)
 
-    content = await file.read()
     max_bytes = settings.MAX_VISION_UPLOAD_MB * 1024 * 1024
+    content = await file.read(max_bytes + 1)
     if not content or len(content) > max_bytes:
         raise HTTPException(
             status_code=413,
