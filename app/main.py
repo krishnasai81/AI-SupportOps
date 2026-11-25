@@ -1,7 +1,10 @@
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 
 from app.config import settings
 
@@ -21,6 +24,9 @@ from app.api.admin_users import router as admin_users_router
 from app.api.vision import router as vision_router
 
 
+FRONTEND_DIST = Path(__file__).resolve().parent.parent / "frontend" / "dist"
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
@@ -29,7 +35,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title=settings.APP_NAME,
-    description="Role-secured multi-agent AI customer support platform",
+    description="Role-secured multi-agent customer support platform",
     version="2.0.0",
     lifespan=lifespan,
 )
@@ -46,6 +52,9 @@ app.include_router(vision_router)
 
 @app.get("/")
 def home():
+    index_file = FRONTEND_DIST / "index.html"
+    if index_file.is_file():
+        return FileResponse(index_file)
     return {"message": "Welcome to AI SupportOps", "status": "running"}
 
 
@@ -62,3 +71,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Mount last so API endpoints and /health take precedence. In production,
+# this serves the Vite build from the same origin as the API.
+if FRONTEND_DIST.is_dir():
+    app.mount("/", StaticFiles(directory=str(FRONTEND_DIST), html=True), name="frontend")
