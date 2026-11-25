@@ -134,7 +134,7 @@ class Ticket(Base):
 
     description = Column(Text, nullable=False)
 
-    normalized_subject = Column(String(200), nullable=True)
+    normalized_subject = Column(Text, nullable=True)
     normalized_description = Column(Text, nullable=True)
     preferred_language = Column(String(16), nullable=False, default="en")
 
