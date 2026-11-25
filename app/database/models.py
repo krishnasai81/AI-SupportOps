@@ -534,3 +534,21 @@ Index(
     ApprovalRequest.ticket_id,
     ApprovalRequest.status
 )
+
+# ============================================================
+# APPLICATION USERS (AUTHENTICATION AND ROLE AUTHORIZATION)
+# ============================================================
+
+from sqlalchemy import Boolean
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    email = Column(String(255), unique=True, index=True, nullable=False)
+    password_hash = Column(String(255), nullable=False)
+    role = Column(String(20), nullable=False, default="customer", index=True)
+    customer_id = Column(Integer, ForeignKey("customers.id"), nullable=True, index=True)
+    is_active = Column(Boolean, nullable=False, default=True)
+    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+
