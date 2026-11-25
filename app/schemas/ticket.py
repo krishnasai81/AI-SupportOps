@@ -13,7 +13,7 @@ class TicketCreate(BaseModel):
     customer_email: EmailStr | None = None
     subject: str = Field(min_length=5, max_length=200)
     description: str = Field(min_length=10)
-    preferred_language: str = Field(default="en", min_length=2, max_length=16)
+    preferred_language: str = Field(default="auto", min_length=2, max_length=16)
 
 
 class TicketUpdate(BaseModel):
