@@ -4,6 +4,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
+
+if settings.ENVIRONMENT.lower() == "production":
+    jwt_secret = settings.JWT_SECRET_KEY.get_secret_value()
+    if jwt_secret == "local-development-only-change-this-secret" or len(jwt_secret) < 32:
+        raise RuntimeError("Set a unique JWT_SECRET_KEY of at least 32 characters in production.")
 from app.database.connection import Base, engine
 from app.database import models
 from app.api.tickets import router as ticket_router
