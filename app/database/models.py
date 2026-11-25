@@ -3,6 +3,7 @@ from datetime import datetime
 import enum
 
 from sqlalchemy import (
+    Boolean,
     Column,
     Integer,
     String,
@@ -132,6 +133,10 @@ class Ticket(Base):
     subject = Column(String(200), nullable=False)
 
     description = Column(Text, nullable=False)
+
+    normalized_subject = Column(String(200), nullable=True)
+    normalized_description = Column(Text, nullable=True)
+    preferred_language = Column(String(16), nullable=False, default="en")
 
     category = Column(
         Enum(
@@ -538,8 +543,6 @@ Index(
 # ============================================================
 # APPLICATION USERS (AUTHENTICATION AND ROLE AUTHORIZATION)
 # ============================================================
-
-from sqlalchemy import Boolean
 
 class User(Base):
     __tablename__ = "users"
