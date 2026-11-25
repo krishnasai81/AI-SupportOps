@@ -13,6 +13,6 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE INDEX IF NOT EXISTS ix_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS ix_users_role ON users(role);
 
-ALTER TABLE tickets ADD COLUMN IF NOT EXISTS normalized_subject VARCHAR(200);
+ALTER TABLE tickets ADD COLUMN IF NOT EXISTS normalized_subject TEXT;
 ALTER TABLE tickets ADD COLUMN IF NOT EXISTS normalized_description TEXT;
 ALTER TABLE tickets ADD COLUMN IF NOT EXISTS preferred_language VARCHAR(16) NOT NULL DEFAULT 'en';
