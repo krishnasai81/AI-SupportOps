@@ -46,7 +46,7 @@ Create/update the backend `.env` from `.env.example`. Set a unique JWT secret. G
 python -c "import secrets; print(secrets.token_urlsafe(48))"
 ```
 
-Set `JWT_SECRET_KEY` to the generated value. Do not commit `.env` or the secret. Configure `DATABASE_URL`, `GROQ_API_KEY`, and `CORS_ORIGINS` for your environment.
+Set `JWT_SECRET_KEY` to the generated value. Do not commit `.env` or the secret. Configure `DATABASE_URL`, `GROQ_API_KEY`, and `CORS_ORIGINS` for your environment. For production, set `ENVIRONMENT=production` and use the generated JWT secret; startup refuses the development default or a secret shorter than 32 characters.
 
 Install backend dependencies:
 
@@ -54,7 +54,7 @@ Install backend dependencies:
 pip install -r requirements.txt
 ```
 
-The frontend uses `sessionStorage` for its short-lived bearer token. Set `frontend/.env`:
+The frontend currently uses `sessionStorage` for its short-lived bearer token. This is suitable for the local portfolio demo but is readable by JavaScript; for production, prefer an HTTP-only, Secure, SameSite cookie or an established OIDC provider, add email verification and password recovery, and consider rate limiting and MFA. Set `frontend/.env`:
 
 ```env
 VITE_API_BASE_URL=http://127.0.0.1:8000
@@ -103,7 +103,7 @@ Visual descriptions identify visible symptoms; they do not guarantee a root-caus
 - `GET /api/v1/auth/me` — current account
 - `POST /api/v1/admin/users/support` — admin-only staff provisioning
 - `GET /api/v1/tickets/` — customers see only their own tickets; support/admin see all
-- `POST /api/v1/approvals/pending` is **not** used; use `GET /api/v1/approvals/pending` as support/admin
+- `GET /api/v1/approvals/pending` — support/admin only
 - `POST /api/v1/approvals/{approval_id}/decision` — support/admin only; reviewer identity comes from the authenticated account
 - `POST /api/v1/vision/tickets/{ticket_id}/analyze` — authenticated owner or support/admin
 
