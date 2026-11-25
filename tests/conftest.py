@@ -47,11 +47,9 @@ def client():
     token = create_access_token(admin)
     db.close()
 
-    with TestClient(
-        app,
-        headers={"Authorization": f"Bearer {token}"},
-    ) as test_client:
-        yield test_client
+    test_client = TestClient(app, headers={"Authorization": f"Bearer {token}"})
+    yield test_client
+    test_client.close()
 
     app.dependency_overrides.clear()
     Base.metadata.drop_all(bind=test_engine)
