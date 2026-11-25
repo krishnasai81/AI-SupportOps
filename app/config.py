@@ -6,7 +6,8 @@ class Settings(BaseSettings):
     APP_NAME: str = "AI SupportOps"
     DATABASE_URL: str = "sqlite:///./supportops.db"
 
-    # Authentication. Set a unique, random JWT_SECRET_KEY in every deployment.
+    # Authentication. The default key is for local development only.
+    ENVIRONMENT: str = "development"
     JWT_SECRET_KEY: SecretStr = SecretStr("local-development-only-change-this-secret")
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
 
