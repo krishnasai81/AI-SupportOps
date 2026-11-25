@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Plus, RefreshCw, Bot, Search, Ticket as TicketIcon, Loader2, X, Eye, Languages, Image } from "lucide-react";
+import { Plus, RefreshCw, Bot, Search, Ticket as TicketIcon, Loader2, X, Eye, Languages } from "lucide-react";
 
 import {
   getTickets, createTicket, processTicket, getTicket, uploadTicketImage
