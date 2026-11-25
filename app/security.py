@@ -58,6 +58,8 @@ def get_current_user(
     user = db.query(User).filter(User.id == user_id, User.is_active.is_(True)).first()
     if user is None:
         raise unauthorized
+    if user.role not in {"customer", "support", "admin"}:
+        raise HTTPException(status_code=403, detail="This account has no valid application role.")
     return user
 
 
