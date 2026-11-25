@@ -1,37 +1,42 @@
 from datetime import datetime, timedelta, timezone
 from typing import Literal
 
-from jose import JWTError, jwt
-from passlib.context import CryptContext
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+from jose import JWTError, jwt
+from pwdlib import PasswordHash
 from sqlalchemy.orm import Session
 
 from app.config import settings
 from app.database.connection import get_db
 from app.database.models import User
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-bearer = HTTPBearer(auto_error=False)
-ALGORITHM = "HS256"
+password_hash = PasswordHash.recommended()
+bearer_scheme = HTTPBearer(auto_error=False)
+JWT_ALGORITHM = "HS256"
 
 
 def hash_password(password: str) -> str:
-    return pwd_context.hash(password)
+    return password_hash.hash(password)
 
 
-def verify_password(password: str, password_hash: str) -> bool:
-    return pwd_context.verify(password, password_hash)
+def verify_password(password: str, hashed: str) -> bool:
+    try:
+        return password_hash.verify(password, hashed)
+    except Exception:
+        return False
 
 
 def create_access_token(user: User) -> str:
-    expires = datetime.now(timezone.utc) + timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
-    payload = {"sub": str(user.id), "role": user.role, "exp": expires}
-    return jwt.encode(payload, settings.JWT_SECRET_KEY.get_secret_value(), algorithm=ALGORITHM)
+    expires_at = datetime.now(timezone.utc) + timedelta(
+        minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
+    )
+    payload = {"sub": str(user.id), "exp": expires_at}
+    return jwt.encode(payload, settings.JWT_SECRET_KEY.get_secret_value(), algorithm=JWT_ALGORITHM)
 
 
 def get_current_user(
-    credentials: HTTPAuthorizationCredentials | None = Depends(bearer),
+    credentials: HTTPAuthorizationCredentials | None = Depends(bearer_scheme),
     db: Session = Depends(get_db),
 ) -> User:
     unauthorized = HTTPException(
@@ -45,7 +50,7 @@ def get_current_user(
         payload = jwt.decode(
             credentials.credentials,
             settings.JWT_SECRET_KEY.get_secret_value(),
-            algorithms=[ALGORITHM],
+            algorithms=[JWT_ALGORITHM],
         )
         user_id = int(payload.get("sub", ""))
     except (JWTError, TypeError, ValueError):
